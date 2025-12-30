@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Services | SandBird Tours{% endblock %}
+
+{% block head %}
+<style>
+    /* --- Page Specific Styles --- */
+    
+    /* 1. HERO SECTION */
+    .sb-page-header {
+        position: relative;
+        height: 60vh;
+        min-height: 450px;
+        background: url('https://images.unsplash.com/photo-1569949381321-40c6b043f44b?q=80&w=2500&auto=format&fit=crop') center/cover no-repeat fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .sb-page-header video {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+    .sb-page-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(900px 520px at 18% 22%, rgba(197,160,89,0.22), transparent 55%),
+            radial-gradient(820px 460px at 84% 28%, rgba(197,160,89,0.12), transparent 55%),
+            radial-gradient(760px 520px at 72% 84%, rgba(255,255,255,0.08), transparent 60%);
+        z-index: 0;
+        pointer-events: none;
+    }
+    .sb-page-header::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(to bottom, rgba(15,23,42,0.05), rgba(15,23,42,0.1)),
+            repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 3px);
+        opacity: 0.55;
+        z-index: 0;
+        pointer-events: none;
+        mix-blend-mode: overlay;
+    }
+    .sb-header-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to bottom, rgba(15,23,42,0.18), rgba(15,23,42,0.55) 55%, #0f172a);
+        z-index: 1;
+    }
+    .sb-header-content {
+        position: relative; z-index: 2;
+        text-align: center; color: white;
+    }
+
+    /* 2. ALTERNATING FEATURE SECTIONS */
+    .sb-feature-section {
+        padding: 5rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .sb-feature-img-frame {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        height: 100%;
+        min-height: 400px;
+    }
+    .sb-feature-img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.7s ease;
+    }
+    .sb-feature-img-frame:hover .sb-feature-img {
+        transform: scale(1.05);
+    }
+    
+    .sb-check-list { list-style: none; padding: 0; margin-top: 1.5rem; }
+    .sb-check-list li {
+        position: relative; padding-left: 30px; margin-bottom: 12px;
+        color: #555; font-size: 1rem;
+    }
+    .sb-check-list li::before {
+        content: '\F26A'; /* Bootstrap Check */
+        font-family: 'bootstrap-icons';
+        position: absolute; left: 0; top: 2px;
+        color: var(--sb-gold); font-size: 1.1rem;
+    }
+
+    /* 3. SERVICE CARDS (Essentials) */
+    .sb-service-card {
+        background: #fff;
+        padding: 2.5rem;
+        border-radius: 16px;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+        height: 100%;
+    }
+    .sb-service-card:hover {
+        transform: translateY(-10px);
+        border-bottom: 4px solid var(--sb-gold);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .sb-service-icon {
+        width: 70px; height: 70px;
+        background: #f8f9fa;
+        color: var(--sb-gold);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        transition: background 0.3s, color 0.3s;
+    }
+    .sb-service-card:hover .sb-service-icon {
+        background: var(--sb-gold);
+        color: white;
+    }
+
+    /* 4. ATTRACTIONS GRID */
+    .sb-attraction-item {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .sb-attraction-item:hover {
+        background: white;
+        color: var(--sb-dark);
+        transform: scale(1.05);
+    }
+
+    /* 5. CORPORATE BANNER */
+    .sb-corporate-banner {
+        background: linear-gradient(45deg, #0f172a, #1e293b);
+        color: white;
+        border-radius: 24px;
+        padding: 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .sb-corp-pattern {
+        position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+        opacity: 0.1;
+        background-image: radial-gradient(#fff 1px, transparent 1px);
+        background-size: 30px 30px;
+    }
+
+    /* Footer Fix */
+    .sb-footer-wrapper { background-color: #0d2323 !important; position: relative; z-index: 10; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- 1. HERO HEADER -->
+<header class="sb-page-header">
+    <video autoplay muted loop playsinline preload="metadata">
+        <source src="https://sandbirdtours.com/video/uae.mp4" type="video/mp4" />
+    </video>
+    <div class="sb-header-overlay"></div>
+    <div class="container sb-header-content" data-aos="fade-up">
+        <span class="text-uppercase letter-spacing-2 text-warning small mb-2 d-block">Premium Travel Solutions</span>
+        <h1 class="display-3 font-serif mb-3">Our Services</h1>
+        <p class="lead opacity-75 mx-auto" style="max-width: 600px;">
+            From curated tour packages to seamless corporate travel, we handle every detail of your journey with precision and luxury.
+        </p>
+    </div>
+</header>
+
+<!-- 2. TOUR PACKAGES (Alternating Layout) -->
+<section class="sb-feature-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="sb-feature-img-frame">
+                    <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1000&auto=format&fit=crop" alt="Tour Packages" class="sb-feature-img">
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="ps-lg-4">
+                    <span class="badge bg-warning text-dark text-uppercase letter-spacing-2 mb-3">Signature Experience</span>
+                    <h2 class="font-serif display-5 mb-4">Curated Tour Packages</h2>
+                    <p class="text-muted lead">We offer customizable tour packages designed to immerse you in the culture, luxury, and adventure of the Middle East.</p>
+                    
+                    <ul class="sb-check-list">
+                        <li><strong>Dubai:</strong> Burj Khalifa, Museum of the Future, Desert Safari, Dubai Mall.</li>
+                        <li><strong>Abu Dhabi:</strong> Ferrari World, Sheikh Zayed Grand Mosque, Louvre Abu Dhabi.</li>
+                        <li><strong>Ras Al-Khaimah:</strong> Jebel Jais Mountains, pristine beaches, and eco-tourism.</li>
+                        <li><strong>GCC Travel:</strong> Cross-border cultural trips to Qatar, Oman & Saudi Arabia.</li>
+                    </ul>
+                    
+                    <a href="{% url 'tour_package' %}" class="btn btn-outline-dark rounded-pill px-4 mt-3">View All Packages</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3. TRAVEL ESSENTIALS (Grid) -->
+<section class="sb-feature-section bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="font-serif display-6">Travel Essentials</h2>
+            <p class="text-muted">Seamless planning for a stress-free journey.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Visa Services -->
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="sb-service-card">
+                    <div class="sb-service-icon"><i class="bi bi-passport"></i></div>
+                    <h4 class="font-serif">Visa Services</h4>
+                    <p class="text-muted small">Comprehensive visa assistance for all nationalities to ensure smooth entry.</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="bi bi-check2 text-warning me-2"></i>Tourist & Visit Visas</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-warning me-2"></i>Long-term processing</li>
+                        <li><i class="bi bi-check2 text-warning me-2"></i>Document verification</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Airport Services -->
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="sb-service-card">
+                    <div class="sb-service-icon"><i class="bi bi-airplane-engines"></i></div>
+                    <h4 class="font-serif">Flight & Airport</h4>
+                    <p class="text-muted small">Global flight bookings and premium airport transfer services.</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="bi bi-check2 text-warning me-2"></i>Global Flight Booking</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-warning me-2"></i>Luxury Airport Transfers</li>
+                        <li><i class="bi bi-check2 text-warning me-2"></i>Multilingual Drivers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Accommodation -->
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="sb-service-card">
+                    <div class="sb-service-icon"><i class="bi bi-buildings"></i></div>
+                    <h4 class="font-serif">Accommodation</h4>
+                    <p class="text-muted small">Handpicked stays ranging from 3-star comfort to 5-star opulence.</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="bi bi-check2 text-warning me-2"></i>Luxury Resorts</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-warning me-2"></i>Honeymoon Suites</li>
+                        <li><i class="bi bi-check2 text-warning me-2"></i>Family Rooms & Villas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4. ATTRACTIONS & EXPERIENCES (Dark Parallax) -->
+<section class="sb-feature-section" style="background: url('https://images.unsplash.com/photo-1578895101408-1a36b8342f5d?q=80&w=2500&auto=format&fit=crop') center/cover fixed;">
+    <div class="position-absolute inset-0 bg-dark opacity-75" style="top:0;left:0;right:0;bottom:0;"></div>
+    
+    <div class="container position-relative z-2">
+        <div class="text-center text-white mb-5" data-aos="fade-up">
+            <h2 class="font-serif display-5">Attractions & Experiences</h2>
+            <p class="opacity-75">Priority access to the UAE's most iconic destinations.</p>
+        </div>
+
+        <div class="row g-3 justify-content-center">
+            <!-- Row 1 -->
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="0">
+                <div class="sb-attraction-item">
+                    <i class="bi bi-building fs-2 mb-2 d-block"></i>
+                    Burj Khalifa
+                </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="100">
+                <div class="sb-attraction-item">
+                    <i class="bi bi-car-front-fill fs-2 mb-2 d-block"></i>
+                    Desert Safari
+                </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="200">
+                <div class="sb-attraction-item">
+                    <i class="bi bi-water fs-2 mb-2 d-block"></i>
+                    Aquaventure
+                </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="300">
+                <div class="sb-attraction-item">
+                    <i class="bi bi-flower1 fs-2 mb-2 d-block"></i>
+                    Global Village
+                </div>
+            </div>
+            
+            <!-- Row 2 -->
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="400">
+                <div class="sb-attraction-item">
+                    <i class="bi bi-speedometer fs-2 mb-2 d-block"></i>
+                    Ferrari World
+                </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="500">
+                <div class="sb-attraction-item">
+                    <i class="bi bi-film fs-2 mb-2 d-block"></i>
+                    Warner Bros
+                </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="600">
+                <div class="sb-attraction-item">
+                    <i class="bi bi-balloon fs-2 mb-2 d-block"></i>
+                    Hot Air Balloon
+                </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="700">
+                <div class="sb-attraction-item">
+                    <i class="bi bi-tsunami fs-2 mb-2 d-block"></i>
+                    Yacht Cruises
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5. CORPORATE & GROUP TRAVEL (Feature Banner) -->
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="sb-corporate-banner" data-aos="flip-up">
+            <div class="sb-corp-pattern"></div>
+            <div class="row align-items-center position-relative z-2">
+                <div class="col-lg-8">
+                    <h2 class="font-serif mb-3">Group Travel & Corporate Bookings</h2>
+                    <p class="lead opacity-75 mb-4">
+                        We specialize in MICE (Meetings, Incentives, Conferences, Events) and tailored group experiences.
+                    </p>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-warning text-dark rounded-circle p-2"><i class="bi bi-briefcase-fill"></i></div>
+                                <span>Corporate Events & Team Building</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-warning text-dark rounded-circle p-2"><i class="bi bi-mortarboard-fill"></i></div>
+                                <span>School & University Tours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                    <a href="{% url 'contact' %}?subject=Corporate Booking" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-dark">
+                        Enquire Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,404 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load money %}
+
+{% block title %}Home | SandBird Tours{% endblock %}
+
+{% block head %}
+    <style>
+      :root {
+        /* Brand Colors */
+        --sb-gold: #c5a059;
+        --sb-dark: #0f172a;
+        
+        /* Footer Specific Colors (From your image) */
+        --footer-bg: #0d2323;       /* Deep Dark Teal */
+        --footer-accent: #198754;   /* Green */
+        --footer-text: #b0b0b0;     /* Grey text */
+        --footer-bottom: #116149;   /* Lighter green bar */
+        
+        /* Effects */
+        --sb-glass: rgba(255, 255, 255, 0.08);
+        --sb-blur: 12px;
+        --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        
+        /* Fonts */
+        --font-serif: 'Playfair Display', serif;
+        --font-sans: 'Outfit', sans-serif;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        color: var(--sb-dark);
+        overflow-x: hidden;
+      }
+
+      h1, h2, h3, h4, h5, .sb-serif {
+        font-family: var(--font-serif);
+      }
+
+      /* --- Loader --- */
+      .sb-loader {
+        position: fixed; inset: 0; background: var(--sb-dark); z-index: 9999;
+        display: flex; justify-content: center; align-items: center;
+        transition: opacity 0.6s ease, visibility 0.6s ease;
+      }
+      .sb-loader.hidden { opacity: 0; visibility: hidden; }
+      .spinner-box { width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; position: relative; }
+      .circle-border { width: 60px; height: 60px; padding: 3px; display: flex; justify-content: center; align-items: center; border-radius: 50%; background: linear-gradient(0deg, rgba(197,160,89,0.1) 33%, rgba(197,160,89,1) 100%); animation: spin .8s linear 0s infinite; }
+      .circle-core { width: 100%; height: 100%; background-color: var(--sb-dark); border-radius: 50%; }
+      @keyframes spin { from { transform: rotate(0); } to { transform: rotate(359deg); } }
+
+      /* --- Navigation --- */
+      .sb-header {
+        background: transparent;
+        transition: all 0.4s ease;
+        padding: 20px 0;
+      }
+      .sb-header.scrolled {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(var(--sb-blur));
+        padding: 10px 0;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      }
+      .sb-brand-text { font-family: var(--font-serif); font-weight: 700; letter-spacing: 0.5px; color: white; }
+      .sb-nav-link {
+        color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; font-size: 0.95rem;
+        transition: color 0.3s; position: relative;
+      }
+      .sb-nav-link:hover, .sb-nav-link.active { color: var(--sb-gold); }
+      .sb-nav-link::after {
+        content: ''; position: absolute; width: 0; height: 1px; bottom: -4px; left: 0;
+        background-color: var(--sb-gold); transition: width 0.3s;
+      }
+      .sb-nav-link:hover::after { width: 100%; }
+
+      /* --- Hero Section --- */
+      .sb-hero {
+        position: relative;
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+      }
+      .carousel-item, .sb-carousel-slide { height: 100vh; width: 100%; }
+      .sb-hero-video {
+        object-fit: cover; width: 100%; height: 100%;
+        position: absolute; top: 0; left: 0; z-index: -1;
+      }
+      .sb-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+        z-index: 1;
+      }
+      .sb-hero-content {
+        position: relative; z-index: 2; height: 100%;
+        display: flex; flex-direction: column; justify-content: center;
+        color: white; padding-top: 60px;
+      }
+      .sb-hero-badge {
+        display: inline-block; padding: 8px 16px; border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 50px; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);
+        margin-bottom: 20px; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;
+      }
+      .sb-hero-title { font-size: 4rem; line-height: 1.1; margin-bottom: 20px; }
+      .sb-btn-glow {
+        background: var(--sb-gold); color: #fff; padding: 15px 35px; border-radius: 0;
+        font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border: none;
+        position: relative; overflow: hidden; transition: all 0.3s;
+      }
+      .sb-btn-glow:hover { background: #fff; color: var(--sb-dark); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+      /* --- Booking Strip --- */
+      .sb-booking-strip {
+        position: relative; z-index: 10; margin-top: -60px;
+        background: white; padding: 30px; border-radius: 4px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+      }
+      .form-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; margin-bottom: 5px; }
+      .form-control, .form-select { border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding-left: 0; font-weight: 500; }
+      .form-control:focus, .form-select:focus { box-shadow: none; border-color: var(--sb-gold); }
+
+      /* --- Content Cards --- */
+      .sb-section-title { font-size: 2.5rem; margin-bottom: 1rem; }
+      .sb-card-luxury {
+        position: relative; overflow: hidden; border-radius: 12px; height: 400px;
+        color: white; cursor: pointer;
+      }
+      .sb-card-img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.8s ease;
+      }
+      .sb-card-luxury:hover .sb-card-img { transform: scale(1.1); }
+      .sb-card-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        display: flex; flex-direction: column; justify-content: flex-end; padding: 30px;
+      }
+      .sb-price-tag {
+        position: absolute; top: 20px; right: 20px;
+        background: rgba(255,255,255,0.95); color: var(--sb-dark);
+        padding: 5px 15px; border-radius: 4px; font-weight: 700; font-size: 0.9rem;
+      }
+
+      /* --- Footer Styles (Specific Request) --- */
+      .sb-footer-wrapper {
+        background-color: var(--footer-bg);
+        position: relative;
+        margin-top: 150px; /* Space for the overlapping cards */
+      }
+
+      /* Overlapping CTA Section */
+      .sb-cta-container {
+        transform: translateY(-50%);
+        margin-bottom: -50px; /* Pull footer content up slightly */
+        position: relative;
+        z-index: 10;
+      }
+
+      .sb-cta-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        height: 100%;
+        position: relative;
+        transition: transform 0.3s ease;
+      }
+      .sb-cta-card:hover { transform: translateY(-5px); }
+
+      .sb-cta-bg-shape {
+        position: absolute; top: 0; right: 0; bottom: 0; width: 60%;
+        background: #e6f5f0; /* Light green shape */
+        border-radius: 50% 0 0 50% / 100% 0 0 100%;
+        z-index: 0;
+      }
+      .sb-cta-content { position: relative; z-index: 2; max-width: 60%; }
+      .sb-cta-img {
+        position: absolute; bottom: 0; right: 10px; height: 110%; z-index: 1; object-fit: contain;
+      }
+
+      /* Main Footer Area */
+      .sb-footer-main { padding-top: 80px; padding-bottom: 60px; color: white; }
+      .sb-footer-brand p { color: var(--footer-text); font-size: 0.9rem; line-height: 1.6; margin-bottom: 25px; }
+
+      .sb-social-circle {
+        width: 40px; height: 40px; background: rgba(255,255,255,0.05);
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 50%; color: white; margin-right: 8px; transition: 0.3s; text-decoration: none;
+      }
+      .sb-social-circle:hover { background: var(--footer-accent); color: white; }
+
+      .sb-footer-heading {
+        font-family: 'Outfit', sans-serif; font-weight: 700; text-transform: uppercase;
+        font-size: 1.1rem; margin-bottom: 25px; position: relative; display: inline-block;
+      }
+      .sb-footer-heading::after {
+        content: ''; position: absolute; left: 0; bottom: -8px; width: 30px; height: 2px; background-color: white;
+      }
+
+      .sb-footer-links { list-style: none; padding: 0; margin: 0; }
+      .sb-footer-links li { margin-bottom: 12px; }
+      .sb-footer-links a {
+        color: white; text-decoration: none; font-size: 0.95rem; transition: 0.3s;
+        position: relative; padding-left: 0;
+      }
+      .sb-footer-links a:hover { color: var(--footer-accent); padding-left: 5px; }
+      /* Green dot for active tag */
+      .sb-footer-links a.active-tag::after {
+        content: ''; display: inline-block; width: 6px; height: 6px; background-color: #00ff88;
+        border-radius: 50%; margin-left: 8px; vertical-align: middle;
+      }
+
+      /* Bottom Bar */
+      .sb-footer-bottom { background-color: var(--footer-bottom); padding: 20px 0; color: white; font-size: 0.9rem; }
+      .sb-footer-bottom a { color: white; text-decoration: none; margin-left: 20px; }
+
+      /* Floating Buttons */
+      .sb-float-btn {
+        position: fixed; right: 30px; z-index: 999;
+        width: 50px; height: 50px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transition: 0.3s; border: none; cursor: pointer;
+      }
+      .sb-whatsapp { bottom: 90px; background-color: #25d366; font-size: 1.5rem; text-decoration: none; }
+      .sb-scroll-top { bottom: 30px; background-color: var(--footer-accent); opacity: 0; visibility: hidden; }
+      .sb-scroll-top.visible { opacity: 1; visibility: visible; }
+
+      /* Mobile Adjustments */
+      @media (max-width: 991px) {
+        .sb-hero-title { font-size: 2.5rem; }
+        .sb-booking-strip { margin-top: 0; margin-bottom: 30px; }
+        .sb-cta-container { transform: translateY(0); margin-top: 50px; margin-bottom: 50px; }
+        .sb-footer-wrapper { margin-top: 0; }
+        .sb-cta-img { height: 150px; right: -10px; }
+      }
+    </style>
+    {% endblock %}
+
+{% block content %}
+
+      
+      <!-- HERO SECTION WITH VIDEO SLIDER -->
+      <section class="sb-hero">
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="8000">
+          <div class="carousel-indicators">
+             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+          </div>
+          <div class="carousel-inner h-100">
+            
+            <!-- Slide 1 -->
+            <div class="carousel-item active">
+              <div class="sb-overlay"></div>
+              <!-- Optional: Add <video> tag here for background video -->
+              <div class="sb-carousel-slide" style="background: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2500&auto=format&fit=crop') center/cover no-repeat;"></div>
+              
+              <div class="container sb-hero-content">
+                <div class="row">
+                  <div class="col-lg-8" data-aos="fade-up" data-aos-duration="1000">
+                    <span class="sb-hero-badge">Welcome to UAE</span>
+                    <h1 class="sb-hero-title">Experience the Magic<br>of the Arabian Dunes</h1>
+                    <p class="fs-5 text-white-50 mb-4" style="max-width: 500px;">Global Travel. Local Expertise. Unforgettable journeys across Dubai and Abu Dhabi.</p>
+                    <a href="{% url 'tour_package' %}" class="btn sb-btn-glow">Explore Tours</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-item">
+              <div class="sb-overlay"></div>
+              <video class="sb-hero-video" autoplay muted loop playsinline preload="metadata">
+                <source src="https://sandbirdtours.com/video/uae.mp4" type="video/mp4" />
+              </video>
+              <div class="container sb-hero-content">
+                <div class="row">
+                  <div class="col-lg-8" data-aos="fade-up">
+                    <span class="sb-hero-badge">Luxury Transport</span>
+                    <h1 class="sb-hero-title">Travel in Absolute<br>Comfort & Style</h1>
+                    <a href="{% url 'our_fleet' %}" class="btn sb-btn-glow">View Fleet</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- BOOKING STRIP -->
+      <div class="container">
+        <div class="sb-booking-strip" data-aos="fade-up" data-aos-delay="100">
+          <form action="{% url 'contact' %}" method="get">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label">Destination</label>
+                <select class="form-select" name="location">
+                  <option selected>All Destinations</option>
+                  <option value="dubai">Dubai</option>
+                  <option value="abu-dhabi">Abu Dhabi</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Type</label>
+                <select class="form-select" name="type">
+                  <option selected>Adventure</option>
+                  <option>City Tour</option>
+                  <option>Luxury Transfer</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control">
+              </div>
+              <div class="col-md-3">
+                <button type="submit" class="btn sb-btn-glow w-100">Find Tours</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- POPULAR PACKAGES -->
+      <section class="py-5 my-5">
+        <div class="container">
+          <div class="d-flex justify-content-between align-items-end mb-5">
+            <div data-aos="fade-right">
+              <h4 class="text-uppercase text-muted small letter-spacing-2 mb-2">Discover</h4>
+              <h2 class="sb-section-title mb-0">Popular Packages</h2>
+            </div>
+            <a href="{% url 'tour_package' %}" class="btn btn-outline-dark rounded-0 px-4" data-aos="fade-left">View All</a>
+          </div>
+
+          <div class="row g-4">
+            {% for p in featured_packages|slice:":3" %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
+              <a href="{% url 'tour_package_detail' p.slug %}" class="text-decoration-none">
+                <div class="sb-card-luxury">
+                  {% if p.price_from %}
+                    <div class="sb-price-tag">{{ site_currency }} {{ p.price_from|fx:site_currency }}</div>
+                  {% endif %}
+                  <img src="{% if p.thumbnail_url %}{{ p.thumbnail_url }}{% else %}https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=800&q=80{% endif %}" class="sb-card-img" alt="{{ p.title }}">
+                  <div class="sb-card-overlay">
+                    <span class="text-uppercase text-white-50 small mb-1">{{ p.get_location_display }}</span>
+                    <h3 class="text-white mb-2 fs-4">{{ p.title }}</h3>
+                    <div class="d-flex gap-3 text-white-50 small">
+                      <span><i class="bi bi-clock"></i> {{ p.duration_days }} Days</span>
+                      <span><i class="bi bi-star-fill text-warning"></i> 5.0</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+            {% empty %}
+             <div class="col-12 text-center text-muted">Add featured packages in Admin Panel</div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <!-- WHY CHOOSE US -->
+      <section class="py-5 bg-light">
+        <div class="container">
+          <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="sb-section-title">Why SandBird?</h2>
+            <p class="text-muted">We don't just plan trips; we curate experiences.</p>
+          </div>
+          <div class="row g-4 text-center">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+              <div class="p-4 bg-white rounded-3 shadow-sm h-100">
+                <div class="fs-1 text-warning mb-3"><i class="bi bi-shield-check"></i></div>
+                <h4>Safety First</h4>
+                <p class="text-muted small">Our fleet is maintained to the highest standards, ensuring your safety is never compromised.</p>
+              </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+              <div class="p-4 bg-white rounded-3 shadow-sm h-100">
+                <div class="fs-1 text-warning mb-3"><i class="bi bi-gem"></i></div>
+                <h4>Luxury Fleet</h4>
+                <p class="text-muted small">Travel in style with our premium range of vehicles, from limousines to 4x4 desert cruisers.</p>
+              </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+              <div class="p-4 bg-white rounded-3 shadow-sm h-100">
+                <div class="fs-1 text-warning mb-3"><i class="bi bi-geo-alt"></i></div>
+                <h4>Local Experts</h4>
+                <p class="text-muted small">Our guides are locals who know the hidden gems of the UAE that typical tourists miss.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA PARALLAX -->
+      <section class="position-relative py-5 d-flex align-items-center" style="min-height: 400px; background: url('https://images.unsplash.com/photo-1546412414-8035e1776c9a?auto=format&fit=crop&w=2000&q=80') fixed center/cover;">
+        <div class="sb-overlay" style="background: rgba(0,0,0,0.6);"></div>
+        <div class="container position-relative z-2 text-center text-white" data-aos="zoom-in">
+          <h2 class="display-4 font-serif mb-4">Ready for your next adventure?</h2>
+          <p class="fs-5 mb-4 opacity-75">Let us handle the details while you create the memories.</p>
+          <a href="{% url 'contact' %}" class="btn sb-btn-glow px-5 py-3">Plan My Trip Now</a>
+        </div>
+      </section>
+{% endblock %}

@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | SandBird Tours{% endblock %}
+
+{% block head %}
+<style>
+    /* --- 1. HEADER STYLES (Stunning & Modern) --- */
+    .sb-page-header {
+        position: relative;
+        height: 75vh; /* Taller for dramatic effect */
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #0f172a;
+    }
+
+    .sb-header-bg {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        /* High-quality Dubai/Desert image */
+        background-image: url('https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=2500&auto=format&fit=crop');
+        background-position: center;
+        background-size: cover;
+        /* Subtle zoom animation */
+        animation: sb-zoom 20s infinite alternate; 
+    }
+
+    @keyframes sb-zoom { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+    .sb-header-overlay {
+        position: absolute; inset: 0;
+        /* Dark gradient for text readability */
+        background: linear-gradient(to bottom, rgba(15,23,42,0.4), #0f172a);
+        z-index: 1;
+    }
+
+    .sb-header-content {
+        position: relative; z-index: 2;
+        text-align: center;
+        max-width: 900px;
+        padding: 0 20px;
+    }
+
+    .sb-subtitle-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        color: #c5a059; /* Gold */
+        font-family: 'Outfit', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.85rem;
+        margin-bottom: 25px;
+    }
+
+    .sb-big-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 4.5rem;
+        color: white;
+        line-height: 1.1;
+        margin-bottom: 20px;
+        text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .sb-header-desc {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 30px;
+        font-weight: 300;
+    }
+
+    /* --- 2. FOOTER FIX (Force Dark Background) --- */
+    /* This ensures the footer is visible even if variables are missing */
+    .sb-footer-wrapper {
+        background-color: #0d2323 !important; /* Deep Dark Teal */
+        position: relative;
+        z-index: 10;
+        margin-top: 0; /* Adjust spacing */
+    }
+    .sb-footer-links a {
+        color: rgba(255,255,255,0.7) !important;
+    }
+    .sb-footer-links a:hover {
+        color: #fff !important;
+        padding-left: 5px;
+    }
+
+    /* --- 3. Content Styling --- */
+    .sb-img-frame {
+        position: relative;
+        z-index: 1;
+    }
+    .sb-img-frame img {
+        border-radius: 8px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    .sb-img-frame::before {
+        content: ''; position: absolute;
+        top: -20px; left: -20px;
+        width: 100%; height: 100%;
+        border: 2px solid #c5a059;
+        border-radius: 8px;
+        z-index: -1;
+    }
+
+    .sb-stat-box {
+        border-left: 3px solid #c5a059;
+        padding-left: 20px;
+        margin-top: 30px;
+    }
+
+    @media (max-width: 768px) {
+        .sb-big-title { font-size: 2.8rem; }
+        .sb-page-header { height: 60vh; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- STUNNING HEADER -->
+<header class="sb-page-header">
+    <div class="sb-header-bg"></div>
+    <div class="sb-header-overlay"></div>
+    
+    <div class="sb-header-content" data-aos="fade-up" data-aos-duration="1000">
+        <span class="sb-subtitle-badge">EST. 2015 • Dubai, UAE</span>
+        <h1 class="sb-big-title">Crafting Journeys,<br>Creating Memories</h1>
+        <p class="sb-header-desc">
+            Sandbird Tours is more than a travel agency; we are your gateway to the authentic soul of the Middle East.
+        </p>
+        
+        <!-- Breadcrumb / Scroll Down -->
+        <div class="mt-4">
+            <a href="#our-story" class="btn btn-outline-light rounded-circle p-3" style="width: 50px; height: 50px;">
+                <i class="bi bi-arrow-down"></i>
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<section id="our-story" class="container py-5 my-5">
+    <div class="row align-items-center g-5">
+        <!-- Image Left -->
+        <div class="col-lg-6" data-aos="fade-right">
+            <div class="sb-img-frame p-3">
+                <img src="https://sandbirdtours.com/assets/img/about/2.jpg" alt="About SandBird" class="img-fluid">
+            </div>
+        </div>
+        
+        <!-- Text Right -->
+        <div class="col-lg-6" data-aos="fade-left">
+            <h5 class="text-uppercase text-warning letter-spacing-2 small mb-2">Who We Are</h5>
+            <h2 class="display-5 font-serif mb-4">Global Standards.<br>Local Expertise.</h2>
+            <p class="lead text-secondary mb-4">
+                We specialize in curated travel packages across the UAE, Qatar, Oman, and Saudi Arabia, serving tourists, business travelers, and families.
+            </p>
+            <p class="text-muted">
+                Whether you're visiting the Burj Khalifa, exploring the Louvre Abu Dhabi, or venturing through the deserts of Ras Al-Khaimah, Sandbird Tours ensures a smooth, safe, and unforgettable journey.
+            </p>
+
+            <div class="d-flex gap-5 mt-4">
+                <div class="sb-stat-box">
+                    <h2 class="fw-bold mb-0">10+</h2>
+                    <span class="text-muted small text-uppercase">Years Experience</span>
+                </div>
+                <div class="sb-stat-box">
+                    <h2 class="fw-bold mb-0">5k+</h2>
+                    <span class="text-muted small text-uppercase">Happy Travelers</span>
+                </div>
+                <div class="sb-stat-box">
+                    <h2 class="fw-bold mb-0">100%</h2>
+                    <span class="text-muted small text-uppercase">Satisfaction</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VALUES / FEATURES -->
+<section class="py-5" style="background-color: #f8f9fa;">
+    <div class="container py-4">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="font-serif display-6">Why Choose SandBird?</h2>
+            <p class="text-muted">We don't just book tickets; we design experiences.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center">
+                    <div class="mb-3 text-warning fs-1"><i class="bi bi-star"></i></div>
+                    <h5 class="mb-3">Premium Service</h5>
+                    <p class="text-muted small">Luxury vehicles and 5-star hospitality standards for every guest.</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center">
+                    <div class="mb-3 text-warning fs-1"><i class="bi bi-shield-check"></i></div>
+                    <h5 class="mb-3">Safety First</h5>
+                    <p class="text-muted small">Rigorous safety checks and professional, licensed drivers.</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center">
+                    <div class="mb-3 text-warning fs-1"><i class="bi bi-translate"></i></div>
+                    <h5 class="mb-3">Multilingual Guides</h5>
+                    <p class="text-muted small">Experts who speak your language and know the local history.</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center">
+                    <div class="mb-3 text-warning fs-1"><i class="bi bi-clock-history"></i></div>
+                    <h5 class="mb-3">24/7 Support</h5>
+                    <p class="text-muted small">We are always just a phone call away, anytime, anywhere.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="container py-5 my-4">
+    <div class="position-relative rounded-4 overflow-hidden p-5 text-center text-white" 
+         style="background: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1500&q=80') center/cover;">
+        <div class="position-absolute inset-0 bg-dark opacity-75" style="top:0;left:0;right:0;bottom:0;"></div>
+        <div class="position-relative z-2 py-4" data-aos="zoom-in">
+            <h2 class="font-serif display-5 mb-3">Ready to Explore the UAE?</h2>
+            <p class="lead mb-4 opacity-75">Let us handle the details while you create the memories.</p>
+            <a href="{% url 'contact' %}" class="btn btn-warning px-5 py-3 fw-bold rounded-pill">Plan My Trip Now</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

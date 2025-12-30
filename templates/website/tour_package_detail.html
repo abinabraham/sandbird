@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ package.title }} | SandBird Tours{% endblock %}
+
+{% block head %}
+<style>
+    /* --- Page Colors based on Reference Image --- */
+    :root {
+        --sb-green: #15803d;     /* Emerald Green */
+        --sb-green-dark: #0d2323; /* Footer Teal */
+        --sb-light-bg: #f8fafc;   /* Very light grey background */
+        --sb-border: #e2e8f0;
+    }
+
+    body { background-color: var(--sb-light-bg); }
+
+    /* --- 1. Main Layout & Image --- */
+    .sb-main-image-wrap {
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        height: 450px;
+        position: relative;
+    }
+    .sb-main-image {
+        width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .sb-tour-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 2.2rem;
+        line-height: 1.2;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+
+    /* --- 2. Action Bar (Location | Enquire | etc) --- */
+    .sb-action-bar {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 2rem;
+        padding-bottom: 1.5rem; margin-bottom: 2rem;
+        border-bottom: 1px solid var(--sb-border);
+    }
+    .sb-action-item {
+        display: flex; align-items: center; gap: 8px;
+        font-weight: 600; font-size: 0.95rem;
+        color: #475569; text-decoration: none;
+    }
+    .sb-action-item i { color: var(--sb-green); font-size: 1.1rem; }
+    .sb-action-item.location { color: var(--sb-green-dark); }
+    .sb-action-item:hover { color: var(--sb-green); }
+
+    /* --- 3. Tab Navigation (Like Reference) --- */
+    .sb-tabs-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+        border: 1px solid var(--sb-border);
+        overflow: hidden;
+    }
+    .sb-nav-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--sb-border);
+        background: #fff;
+        padding: 0 1.5rem;
+    }
+    .sb-nav-link {
+        border: none;
+        background: transparent;
+        padding: 1.2rem 1.5rem;
+        color: #64748b;
+        font-weight: 600;
+        position: relative;
+        cursor: pointer;
+        transition: color 0.3s;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .sb-nav-link i { font-size: 1.1rem; }
+    .sb-nav-link:hover { color: #1e293b; }
+    .sb-nav-link.active { color: var(--sb-green); }
+    .sb-nav-link.active::after {
+        content: ''; position: absolute;
+        bottom: 0; left: 0; width: 100%; height: 3px;
+        background: var(--sb-green);
+        border-radius: 3px 3px 0 0;
+    }
+
+    .sb-tab-content { padding: 2rem; }
+    .sb-tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .sb-tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- 4. Content Styles --- */
+    .sb-highlights-list {
+        list-style: none; padding: 0;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .sb-highlights-list li {
+        display: flex; align-items: flex-start; gap: 10px;
+        color: #334155; font-size: 0.95rem; line-height: 1.6;
+    }
+    .sb-highlights-list li::before {
+        content: '\F26A'; font-family: 'bootstrap-icons';
+        color: var(--sb-green); font-size: 1rem; margin-top: 2px;
+    }
+
+    /* Timeline Itinerary */
+    .sb-it-step {
+        position: relative; padding-left: 2.5rem; padding-bottom: 2rem;
+        border-left: 2px dashed #cbd5e1;
+    }
+    .sb-it-step:last-child { border-left: none; padding-bottom: 0; }
+    .sb-it-marker {
+        position: absolute; left: -9px; top: 0;
+        width: 16px; height: 16px; background: var(--sb-green);
+        border-radius: 50%; box-shadow: 0 0 0 4px #e2e8f0;
+    }
+    .sb-it-day { font-family: 'Playfair Display', serif; font-weight: 700; color: #1e293b; font-size: 1.1rem; margin-bottom: 5px; }
+
+    /* --- 5. Sidebar Styles --- */
+    .sb-sidebar-sticky { position: sticky; top: 100px; }
+    
+    .sb-info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+        border: 1px solid var(--sb-border);
+        margin-top: 1.5rem;
+    }
+    .sb-info-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.25rem; margin-bottom: 1.5rem; color: #1e293b; }
+    
+    .sb-info-row {
+        display: flex; align-items: flex-start; gap: 12px;
+        margin-bottom: 1.2rem;
+        font-size: 0.95rem; color: #475569;
+    }
+    .sb-info-row i { color: var(--sb-green); font-size: 1.1rem; margin-top: 1px; }
+    .sb-info-label { font-weight: 700; color: #1e293b; margin-right: 5px; }
+
+    /* Buttons */
+    .btn-sb-primary {
+        background: var(--sb-green); color: white;
+        width: 100%; padding: 14px; border: none;
+        border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        transition: 0.3s;
+    }
+    .btn-sb-primary:hover { background: #14532d; color: white; }
+
+    .btn-sb-outline {
+        background: white; color: #1e293b;
+        width: 100%; padding: 14px; border: 1px solid #cbd5e1;
+        border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        transition: 0.3s;
+    }
+    .btn-sb-outline:hover { border-color: #1e293b; background: #f1f5f9; }
+
+    .btn-sb-share {
+        background: #f1f5f9; color: var(--sb-green);
+        width: 100%; padding: 10px; border: none; border-radius: 6px;
+        font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;
+        transition: 0.3s;
+    }
+    .btn-sb-share:hover { background: #e2e8f0; color: #1e293b; }
+
+    /* Footer Fix */
+    .sb-footer-wrapper { background-color: var(--sb-green-dark) !important; }
+
+    /* Mobile */
+    @media(max-width: 768px) {
+        .sb-nav-tabs { overflow-x: auto; white-space: nowrap; }
+        .sb-highlights-list { grid-template-columns: 1fr; }
+        .sb-tour-title { font-size: 1.8rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5 mt-4">
+    <div class="row g-5">
+        
+        <!-- === LEFT COLUMN: MAIN CONTENT === -->
+        <div class="col-lg-8">
+            
+            <!-- 1. Hero Image -->
+            <div class="sb-main-image-wrap">
+                <img src="{% if package.image_url %}{{ package.image_url }}{% else %}https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=80{% endif %}" alt="{{ package.title }}" class="sb-main-image">
+            </div>
+
+            <!-- 2. Header & Actions -->
+            <h1 class="sb-tour-title">{{ package.title }}</h1>
+            
+            <div class="sb-action-bar">
+                <div class="sb-action-item location">
+                    <i class="bi bi-geo-alt-fill"></i> Location: {{ package.get_location_display|upper }}
+                </div>
+                <a href="{% url 'contact' %}?tour={{ package.title|urlencode }}" class="sb-action-item">
+                    <i class="bi bi-file-earmark-text"></i> Enquire Now
+                </a>
+                <a href="#" class="sb-action-item">
+                    <i class="bi bi-envelope"></i> Email Itinerary
+                </a>
+                <a href="#" class="sb-action-item">
+                    <i class="bi bi-whatsapp"></i> Send Itinerary
+                </a>
+            </div>
+
+            <!-- 3. Tabs & Content -->
+            <div class="sb-tabs-card">
+                <!-- Navigation Tabs -->
+                <div class="sb-nav-tabs">
+                    <button class="sb-nav-link active" onclick="openTab(event, 'highlights')">
+                        <i class="bi bi-bookmark-star"></i> Highlights
+                    </button>
+                    <button class="sb-nav-link" onclick="openTab(event, 'itinerary')">
+                        <i class="bi bi-map"></i> Tour Itinerary
+                    </button>
+                    <button class="sb-nav-link" onclick="openTab(event, 'gallery')">
+                        <i class="bi bi-images"></i> Gallery
+                    </button>
+                    <button class="sb-nav-link" onclick="openTab(event, 'reviews')">
+                        <i class="bi bi-star"></i> Reviews
+                    </button>
+                </div>
+
+                <!-- Content Panes -->
+                <div class="sb-tab-content">
+                    
+                    <!-- Tab: Highlights -->
+                    <div id="highlights" class="sb-tab-pane active">
+                        <p class="text-muted mb-4">{{ package.short_description }}</p>
+                        
+                        <h5 class="font-serif mb-3 fw-bold">Highlights</h5>
+                        {% if package.highlights %}
+                        <ul class="sb-highlights-list">
+                            {% for line in package.highlights.splitlines %}
+                                {% if line %}<li>{{ line }}</li>{% endif %}
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p class="text-muted small">Highlights are being updated for this tour.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tab: Itinerary -->
+                    <div id="itinerary" class="sb-tab-pane">
+                        <h5 class="font-serif mb-4 fw-bold">Tour Itinerary</h5>
+                        {% if package.itinerary %}
+                            <div class="mt-3">
+                                {% for step in package.itinerary %}
+                                <div class="sb-it-step">
+                                    <div class="sb-it-marker"></div>
+                                    <div class="sb-it-day">Day {{ forloop.counter }}</div>
+                                    <p class="text-muted mb-0">{{ step }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Itinerary details coming soon.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tab: Gallery -->
+                    <div id="gallery" class="sb-tab-pane">
+                        <div class="row g-3">
+                            {% for img in package.gallery %}
+                            <div class="col-md-6">
+                                <img src="{{ img }}" class="img-fluid rounded-3 w-100" style="height: 200px; object-fit: cover;" alt="Gallery">
+                            </div>
+                            {% empty %}
+                            <div class="col-12 text-muted">No images available yet.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Tab: Reviews -->
+                    <div id="reviews" class="sb-tab-pane">
+                        {% for r in package.reviews %}
+                        <div class="d-flex gap-3 mb-4 border-bottom pb-3">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; color: #aaa;">
+                                <i class="bi bi-person-fill fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">{{ r.name|default:'Guest' }}</h6>
+                                <div class="text-warning small mb-2">
+                                    {% for _ in '12345' %}
+                                        <i class="bi {% if forloop.counter <= r.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                                <p class="text-muted small mb-0">{{ r.text }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">No reviews yet. Be the first to review!</p>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- === RIGHT COLUMN: SIDEBAR === -->
+        <div class="col-lg-4">
+            <div class="sb-sidebar-sticky">
+                
+                <!-- Action Buttons -->
+                <div class="d-flex flex-column gap-3">
+                    <a href="{% url 'contact' %}?tour={{ package.title|urlencode }}" class="btn btn-sb-primary">
+                        Book This Trip
+                    </a>
+                    <a href="tel:{{ site_contact_phone }}" class="btn btn-sb-outline">
+                        Call Us
+                    </a>
+                </div>
+
+                <!-- Info Card -->
+                <div class="sb-info-card">
+                    <h4 class="sb-info-title">Tour Information</h4>
+                    
+                    <div class="sb-info-row">
+                        <i class="bi bi-clock"></i>
+                        <div>
+                            <span class="sb-info-label">Duration:</span>
+                            {{ package.duration_days }} Days
+                        </div>
+                    </div>
+                    
+                    <div class="sb-info-row">
+                        <i class="bi bi-geo-alt"></i>
+                        <div>
+                            <span class="sb-info-label">Location:</span>
+                            {{ package.get_location_display }}
+                        </div>
+                    </div>
+                    
+                    <div class="sb-info-row">
+                        <i class="bi bi-people"></i>
+                        <div>
+                            <span class="sb-info-label">Suitable for:</span>
+                            Families, Couples
+                        </div>
+                    </div>
+                    
+                    <div class="sb-info-row">
+                        <i class="bi bi-currency-dollar"></i>
+                        <div>
+                            <span class="sb-info-label">Cancellation:</span>
+                            Non Refundable
+                        </div>
+                    </div>
+                    
+                    <div class="sb-info-row">
+                        <i class="bi bi-translate"></i>
+                        <div>
+                            <span class="sb-info-label">Language:</span>
+                            English, Arabic
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top">
+                         <button class="btn btn-sb-share">
+                             <i class="bi bi-share"></i> Share Itinerary
+                         </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Simple Tab Switcher Script
+    function openTab(evt, tabName) {
+        // Hide all panes
+        var panes = document.getElementsByClassName("sb-tab-pane");
+        for (var i = 0; i < panes.length; i++) {
+            panes[i].classList.remove("active");
+        }
+        
+        // Remove active class from buttons
+        var links = document.getElementsByClassName("sb-nav-link");
+        for (var i = 0; i < links.length; i++) {
+            links[i].classList.remove("active");
+        }
+
+        // Show current tab and activate button
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
+{% endblock %}

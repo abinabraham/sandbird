@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Fleet | SandBird Tours{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="sb-page-hero">
+    <h1 class="sb-page-title">Our Fleet</h1>
+    <p class="sb-page-sub">Comfort, safety and style — for every trip.</p>
+  </div>
+
+  <div class="sb-fleet-grid mt-4">
+    {% for v in fleet_items %}
+      <article class="sb-fleet-card" data-sb-reveal>
+        <div class="sb-fleet-media" style="background-image:url('{{ v.image_url }}');" aria-label="{{ v.title }}"></div>
+        <div class="sb-fleet-body">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <div class="sb-fleet-badges">
+              {% if v.driver_included %}
+                <span class="sb-fleet-badge"><i class="bi bi-person-check" aria-hidden="true"></i> Driver Included</span>
+              {% endif %}
+            </div>
+            <a class="btn btn-outline-dark btn-sm" href="{% url 'contact' %}">Book Now</a>
+          </div>
+
+          <div class="sb-fleet-pricing mt-3">
+            <div class="sb-price-chip">
+              <div class="sb-price-k">10 Hours</div>
+              <div class="sb-price-v">{{ v.hours_10 }}</div>
+            </div>
+            <div class="sb-price-chip">
+              <div class="sb-price-k">05 Hours</div>
+              <div class="sb-price-v">{{ v.hours_5 }}</div>
+            </div>
+            <div class="sb-price-chip">
+              <div class="sb-price-k">Ex-Hours</div>
+              <div class="sb-price-v">{{ v.ex_hours }}</div>
+            </div>
+          </div>
+
+          <h2 class="sb-fleet-title mt-3">{{ v.title }}</h2>
+          <p class="sb-fleet-desc mb-0">{{ v.description }}</p>
+        </div>
+      </article>
+    {% empty %}
+      <div class="sb-card">
+        <div class="sb-card-title">No fleet vehicles yet</div>
+        <div class="text-muted">Add fleet items to display them here.</div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
