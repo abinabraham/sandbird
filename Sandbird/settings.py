@@ -168,3 +168,19 @@ EMAIL_BACKEND = (
     if EMAIL_HOST
     else 'django.core.mail.backends.console.EmailBackend'
 )
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://sandbird.nestoonline.com",
+]
+
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = [
+    "https://sandbird.nestoonline.com",
+]
+
+# Session settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
